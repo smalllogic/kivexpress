@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  sender_address: one
+  receiver_address: one
+  weight: 9.99
+  volume: 9.99
+  length: 9.99
+  width: 9.99
+  height: 9.99
+  status: MyString
+
+two:
+  user: two
+  sender_address: two
+  receiver_address: two
+  weight: 9.99
+  volume: 9.99
+  length: 9.99
+  width: 9.99
+  height: 9.99
+  status: MyString

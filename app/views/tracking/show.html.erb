@@ -1,0 +1,99 @@
+<div>
+  <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-4">欢迎来到运单查询</h1>
+      <p class="text-lg text-gray-600">使用以下便捷工具之一跟踪您的货件。想要更清楚地了解包裹的情况吗？</p>
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-8 mb-8">
+      <h2 class="text-xl font-semibold text-primary mb-6 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        物流追踪:
+      </h2>
+
+      <%= form_with url: track_path, method: :get, local: true, class: "space-y-4" do |f| %>
+        <div>
+          <label for="q" class="block text-sm font-medium text-gray-700 mb-1">请输入物流单号，每次最多可查询1个</label>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <%= text_field_tag :q, params[:q], placeholder: "请输入物流单号...", class: "flex-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm" %>
+            <%= f.submit "提交", class: "inline-flex items-center justify-center px-6 py-2 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-blue-700 transition duration-150 ease-in-out" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <% if @order %>
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-4 bg-gray-50 border-b flex justify-between items-center">
+          <h3 class="text-lg font-medium text-gray-900">查询结果：单号 <%= @order.id %></h3>
+          <span class="<%= status_badge_class(@order.status) %> px-3 py-1 rounded-full text-xs font-semibold">
+            <%= t("orders.status.#{@order.status}", default: @order.status) %>
+          </span>
+        </div>
+      
+        <div class="p-6">
+          <% if @tracking_updates.any? %>
+            <div class="flow-root">
+              <ul role="list" class="-mb-8">
+                <% @tracking_updates.each_with_index do |update, index| %>
+                  <li>
+                    <div class="relative pb-8">
+                      <% unless index == @tracking_updates.size - 1 %>
+                        <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                      <% end %>
+                      <div class="relative flex space-x-3">
+                        <div>
+                          <span class="h-8 w-8 rounded-full <%= index == 0 ? 'bg-primary' : 'bg-gray-400' %> flex items-center justify-center ring-8 ring-white">
+                            <% if index == 0 %>
+                              <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                              </svg>
+                            <% else %>
+                              <div class="h-2 w-2 rounded-full bg-white"></div>
+                            <% end %>
+                          </span>
+                        </div>
+                        <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                          <div>
+                            <p class="text-sm <%= index == 0 ? 'text-gray-900 font-bold' : 'text-gray-500' %>">
+                              <%= update.status_description %>
+                            </p>
+                            <p class="text-xs text-gray-400 mt-1">
+                              <%= update.location %>
+                            </p>
+                          </div>
+                          <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                            <time datetime="<%= update.created_at %>"><%= update.created_at.strftime("%Y-%m-%d %H:%M") %></time>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% else %>
+            <div class="text-center py-8">
+              <p class="text-gray-500">订单已创建，等待处理中。</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% elsif params[:q].present? %>
+      <div class="bg-red-50 border-l-4 border-red-400 p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-red-700">未找到该单号，请检查输入是否正确。</p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

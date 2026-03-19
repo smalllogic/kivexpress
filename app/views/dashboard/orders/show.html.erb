@@ -1,0 +1,106 @@
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+  <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+    <h1 class="text-2xl font-bold text-gray-900">订单详情 #<%= @order.id %></h1>
+    <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+      <%= I18n.t(@order.status, scope: 'orders.status', default: @order.status) %>
+    </span>
+  </div>
+
+  <div class="p-6 space-y-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- 起始地址 -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">起始地址</h3>
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+          <p class="text-lg font-bold text-gray-900"><%= @order.sender_name %></p>
+          <p class="text-gray-600"><%= @order.sender_phone %></p>
+          <p class="text-gray-500 mt-2 text-sm">
+            <%= @order.sender_full_address %>
+          </p>
+          <% if @order.sender_email.present? %>
+            <p class="text-xs text-gray-400 mt-1"><%= @order.sender_email %></p>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- 目的地地址 -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">目的地地址</h3>
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+          <p class="text-lg font-bold text-gray-900"><%= @order.receiver_name %></p>
+          <p class="text-gray-600"><%= @order.receiver_phone %></p>
+          <p class="text-gray-500 mt-2 text-sm">
+            <%= @order.receiver_full_address %>
+          </p>
+          <% if @order.receiver_email.present? %>
+            <p class="text-xs text-gray-400 mt-1"><%= @order.receiver_email %></p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- 货物信息 -->
+    <div class="space-y-3">
+      <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">货物及物流信息</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+          <p class="text-xs text-gray-500 mb-1">重量</p>
+          <p class="text-lg font-bold text-primary"><%= @order.weight %> kg</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+          <p class="text-xs text-gray-500 mb-1">体积</p>
+          <p class="text-lg font-bold text-primary"><%= @order.volume %> m³</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm col-span-2">
+          <p class="text-xs text-gray-500 mb-1">尺寸 (长x宽x高)</p>
+          <p class="text-lg font-bold text-primary"><%= "#{@order.length} x #{@order.width} x #{@order.height} cm" %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 物流轨迹 -->
+    <div class="pt-6 border-t border-gray-200">
+      <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">物流轨迹</h3>
+      <% if @order.tracking_updates.any? %>
+        <div class="flow-root">
+          <ul role="list" class="-mb-8">
+            <% @order.tracking_updates.order(created_at: :desc).each_with_index do |update, index| %>
+              <li>
+                <div class="relative pb-8">
+                  <% unless index == @order.tracking_updates.size - 1 %>
+                    <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                  <% end %>
+                  <div class="relative flex space-x-3">
+                    <div>
+                      <span class="h-8 w-8 rounded-full <%= index == 0 ? 'bg-primary' : 'bg-gray-300' %> flex items-center justify-center ring-8 ring-white">
+                        <svg class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                      <div>
+                        <p class="text-sm font-bold <%= index == 0 ? 'text-primary' : 'text-gray-500' %>"><%= update.status_description %></p>
+                        <p class="text-xs text-gray-500 mt-1"><%= update.location %></p>
+                      </div>
+                      <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                        <time datetime="<%= update.created_at %>"><%= update.created_at.strftime("%Y-%m-%d %H:%M") %></time>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-500 italic">暂无物流轨迹信息，请耐心等待更新。</p>
+      <% end %>
+    </div>
+
+    <div class="pt-6 border-t border-gray-200 flex justify-between items-center">
+      <p class="text-sm text-gray-500">下单时间：<%= @order.created_at.strftime("%Y-%m-%d %H:%M:%S") %></p>
+      <%= link_to "返回列表", dashboard_orders_path, class: "text-primary hover:text-primary/80 font-medium" %>
+    </div>
+  </div>
+</div>

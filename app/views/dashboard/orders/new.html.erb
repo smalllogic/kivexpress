@@ -1,0 +1,114 @@
+<div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">在线下单</h1>
+
+    <%= form_with(model: [:dashboard, @order], class: "space-y-8") do |f| %>
+      <% if @order.errors.any? %>
+        <div class="bg-red-50 border-l-4 border-red-400 p-4">
+          <div class="flex">
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-800">提交失败，请检查以下错误：</h3>
+              <ul class="mt-2 text-sm text-red-700 list-disc pl-5">
+                <% @order.errors.full_messages.each do |msg| %>
+                  <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-blue-700">
+              请直接从您已保存的地址中选择。如果还没有地址，请先前往 <a href="<%= dashboard_addresses_path %>" class="font-medium underline hover:text-blue-600">地址管理</a> 添加。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 起始地址 -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold text-gray-900 border-b pb-2 flex items-center">
+          <span class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mr-2 text-sm">1</span>
+          起始地址
+        </h3>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">选择发件地址</label>
+          <select name="order[selected_sender_id]" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm">
+            <option value="">--- 请选择 ---</option>
+            <% @addresses.each do |address| %>
+              <option value="<%= address.id %>" <%= 'selected' if params.dig(:order, :selected_sender_id) == address.id.to_s %>>
+                <%= address.contact_name %> (<%= address.phone %>) - <%= address.city %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+      </div>
+
+      <!-- 目的地地址 -->
+      <div class="space-y-4 pt-4">
+        <h3 class="text-lg font-semibold text-gray-900 border-b pb-2 flex items-center">
+          <span class="w-8 h-8 bg-secondary text-white rounded-full flex items-center justify-center mr-2 text-sm">2</span>
+          目的地地址
+        </h3>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">选择收件地址</label>
+          <select name="order[selected_receiver_id]" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm">
+            <option value="">--- 请选择 ---</option>
+            <% @addresses.each do |address| %>
+              <option value="<%= address.id %>" <%= 'selected' if params.dig(:order, :selected_receiver_id) == address.id.to_s %>>
+                <%= address.contact_name %> (<%= address.phone %>) - <%= address.city %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+      </div>
+
+      <!-- 货物信息 -->
+      <div class="space-y-4 pt-4">
+        <h3 class="text-lg font-semibold text-gray-900 border-b pb-2 flex items-center">
+          <span class="w-8 h-8 bg-gray-800 text-white rounded-full flex items-center justify-center mr-2 text-sm">3</span>
+          货物信息
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <%= f.label :weight, "重量 (kg)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= f.number_field :weight, step: :any, required: true, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" %>
+          </div>
+          <div>
+            <%= f.label :volume, "体积 (m³)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= f.number_field :volume, step: :any, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" %>
+          </div>
+          <div class="md:col-span-2 grid grid-cols-3 gap-4">
+            <div>
+              <%= f.label :length, "长度 (cm)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+              <%= f.number_field :length, step: :any, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" %>
+            </div>
+            <div>
+              <%= f.label :width, "宽度 (cm)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+              <%= f.number_field :width, step: :any, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" %>
+            </div>
+            <div>
+              <%= f.label :height, "高度 (cm)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+              <%= f.number_field :height, step: :any, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t border-gray-200">
+        <%= f.submit "立即预订", class: "w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+</div>

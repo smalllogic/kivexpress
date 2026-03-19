@@ -1,0 +1,29 @@
+<div class="max-w-md mx-auto bg-white p-8 border border-gray-200 rounded-lg shadow-sm">
+  <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">修改您的密码</h2>
+
+  <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "space-y-6" }) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
+    <%= f.hidden_field :reset_password_token %>
+
+    <div>
+      <%= f.label :password, "新密码", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <% if @minimum_password_length %>
+        <span class="text-xs text-gray-500 font-normal">(至少 <%= @minimum_password_length %> 个字符)</span>
+      <% end %>
+      <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" %>
+    </div>
+
+    <div>
+      <%= f.label :password_confirmation, "确认新密码", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" %>
+    </div>
+
+    <div>
+      <%= f.submit "修改密码", class: "w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer transition-colors" %>
+    </div>
+  <% end %>
+
+  <div class="mt-6 pt-6 border-t border-gray-100">
+    <%= render "devise/shared/links" %>
+  </div>
+</div>

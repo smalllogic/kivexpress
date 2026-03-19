@@ -1,0 +1,38 @@
+<div class="space-y-2 text-sm">
+  <%- if controller_name != 'sessions' %>
+    <%= link_to "登录", new_session_path(resource_name), class: "text-primary hover:text-primary/80 font-medium" %>
+  <% end %>
+
+  <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+    <div class="flex items-center space-x-1">
+      <span class="text-gray-500">还没有账号？</span>
+      <%= link_to "立即注册", new_registration_path(resource_name), class: "text-secondary hover:text-secondary/80 font-medium" %>
+    </div>
+  <% end %>
+
+  <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+    <div>
+      <%= link_to "忘记密码？", new_password_path(resource_name), class: "text-gray-500 hover:text-gray-700 underline underline-offset-4" %>
+    </div>
+  <% end %>
+
+  <%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
+    <div>
+      <%= link_to "未收到确认邮件？", new_confirmation_path(resource_name), class: "text-gray-500 hover:text-gray-700" %>
+    </div>
+  <% end %>
+
+  <%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
+    <div>
+      <%= link_to "未收到解锁指令？", new_unlock_path(resource_name), class: "text-gray-500 hover:text-gray-700" %>
+    </div>
+  <% end %>
+
+  <%- if devise_mapping.omniauthable? %>
+    <div class="pt-4 border-t border-gray-100 mt-4 space-y-2">
+      <%- resource_class.omniauth_providers.each do |provider| %>
+        <%= button_to "使用 #{OmniAuth::Utils.camelize(provider)} 登录", omniauth_authorize_path(resource_name, provider), data: { turbo: false }, class: "w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
